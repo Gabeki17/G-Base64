@@ -7,10 +7,12 @@ const char PROGMEM B64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 String Gbase64::Sbe(String input)
   {
 	byte input_b[input.length()];
-	uint8_t padding;
     byte atalakit_6[(input.length()*8)/6];
     uint16_t z = 0;
 	String bekodolva;
+	boolean tort = 0;
+	
+	if ( ((input.length()*8)/6)*1.0 < (input.length()*8)/6.0 ) tort = 1;
   
   input.getBytes(input_b, input.length() + 1);
   
@@ -25,9 +27,7 @@ String Gbase64::Sbe(String input)
         delay(0);
       }
 
-    if (((input.length()*8)/6)*6 < input.length()*8) {padding = 6 - (input.length()*8 - ((input.length()*8)/6)*6);}
-
-    for (uint16_t i=0;i<=(input.length()*8)/6;i++)
+    for (uint16_t i=0;i<(input.length()*8)/6 + tort;i++)
       {
         delay(0);
         bekodolva+=char(pgm_read_byte(B64 + atalakit_6[i]));
@@ -46,11 +46,13 @@ String Gbase64::Sbe(String input)
 
 String Gbase64::Bbe(byte *input_b,uint16_t hossz)
   {
-	uint8_t padding;
     byte atalakit_6[(hossz*8)/6];
     uint16_t z = 0;
 	String bekodolva;
-  
+    boolean tort = 0;
+   
+    if ( ((hossz*8)/6)*1.0 < (hossz*8)/6.0 ) tort = 1;
+ 
     for (uint16_t i =0;i<(hossz*8)/6;i=i+3)
       {
         if(z<=(hossz*8)/6) atalakit_6[z] = input_b[i] >> 2;
@@ -62,9 +64,7 @@ String Gbase64::Bbe(byte *input_b,uint16_t hossz)
         delay(0);
       }
 
-    if (((hossz*8)/6)*6 < hossz*8) {padding = 6 - (hossz*8 - ((hossz*8)/6)*6);}
-
-    for (uint16_t i=0;i<=(hossz*8)/6;i++)
+    for (uint16_t i=0;i<(hossz*8)/6 + tort;i++)
       {
         delay(0);
         bekodolva+=char(pgm_read_byte(B64 + atalakit_6[i]));
@@ -130,13 +130,13 @@ String Gbase64::Ski(String kikodol)
   }
   
 void Gbase64::Bki(String kikodol, byte *vissza)
-  {
-	char todec[kikodol.length()];
+  {  
+	char todec[kikodol.length()+1];
 	byte visszaalakit_6[kikodol.length()];
-	uint8_t padding_v = 0;
+	uint16_t padding_v = 0;
 	uint16_t counter = 0;
 
-  kikodol.toCharArray(todec, kikodol.length()+1);
+	kikodol.toCharArray(todec, kikodol.length()+1);
 
   for (uint16_t i=0;i<=kikodol.length();i++)
     {
